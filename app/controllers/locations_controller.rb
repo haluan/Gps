@@ -5,10 +5,16 @@ class LocationsController < ApplicationController
   # GET /locations
   # GET /locations.json
   def index
-    @locations = Location.all
+    @locations = Location.all.where(['date > ?', DateTime.now-600.minutes])
     @hash = Gmaps4rails.build_markers(@locations) do |loc, marker|
       marker.lat loc.latitude
       marker.lng loc.longitude
+      marker.infowindow render_to_string(:partial => "/locations/infowindow", :locals => { :locals => loc})
+      marker.title "LOCASI"
+      # marker.json({ :population => city.population})
+      # marker.picture({:picture => "http://mapicons.nicolasmollet.com/     wp-content/uploads/mapicons/shape-default/color-3875d7/shapeco     lor-color/shadow-1/border-dark/symbolstyle-contrast/symbolshad     owstyle-dark/gradient-iphone/information.png",
+      #                 :width => 32,
+      #                 :height => 32})
     end
   end
 
@@ -74,6 +80,6 @@ class LocationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def location_params
-      params.require(:location).permit(:latitude, :longitude)
+      params.require(:location).permit(:latitude, :longitude, :date)
     end
 end

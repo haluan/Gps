@@ -5,7 +5,13 @@
  handler = Gmaps.build('Google');
 handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
   markers = handler.addMarkers(<%=raw @hash.to_json %>);
+
+  <% if @locations.count>1 %>
+  polylines = handler.addPolylines([<%=raw @hash.to_json %>],{ strokeColor: '#ea4040'});
+  handler.bounds.extendWith(polylines);
+  <% end %>
   handler.bounds.extendWith(markers);
+  
   handler.fitMapToBounds();
 });
 </script>
@@ -17,6 +23,7 @@ handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
     <tr>
       <th>Latitude</th>
       <th>Longitude</th>
+      <th>Date</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -26,6 +33,7 @@ handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
       <tr>
         <td><%= location.latitude %></td>
         <td><%= location.longitude %></td>
+        <td><%= location.date %></td>
         <td><%= link_to 'Show', location %></td>
         <td><%= link_to 'Edit', edit_location_path(location) %></td>
         <td><%= link_to 'Destroy', location, method: :delete, data: { confirm: 'Are you sure?' } %></td>
